@@ -20,7 +20,7 @@ public class CommentService {
         return response;
     }
 
-    public Comment addComment(int adId, CreateOrUpdateComment createComment) {
+    public int addComment(int adId, CreateOrUpdateComment createComment) {
         if (createComment.getText() == null || createComment.getText().isEmpty()) {
             throw new IllegalArgumentException("Text of comment can't be empty.");
         }
@@ -30,7 +30,7 @@ public class CommentService {
         newComment.setCreatedAt(System.currentTimeMillis());
         newComment.setText(createComment.getText());
         comments.add(newComment);
-        return newComment;
+        return newComment.getPk();
     }
 
     public void deleteComment(int adId, int commentId) {
