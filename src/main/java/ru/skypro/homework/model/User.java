@@ -1,14 +1,13 @@
 package ru.skypro.homework.model;
 
+import jakarta.persistence.Entity;
 import lombok.Data;
 import ru.skypro.homework.dto.Role;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name = "\"user\"")
 @Data
 public class User {
     @Id
