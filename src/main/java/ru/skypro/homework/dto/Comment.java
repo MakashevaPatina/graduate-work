@@ -1,19 +1,18 @@
 package ru.skypro.homework.dto;
 
 import lombok.Data;
-import org.springframework.data.annotation.Id;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+
+import javax.persistence.*;
 
 @Entity
+@Table(name = "comments")
 @Data
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long pk;
+
     private int author;
     private String authorImage;
     private String authorFirstName;
