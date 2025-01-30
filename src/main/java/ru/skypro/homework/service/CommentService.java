@@ -47,7 +47,7 @@ public class CommentService {
 
     public Comment updateComment(int adId, Long commentId, CreateOrUpdateComment updateComment) {
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentNotFoundException("Comment isn't found."));
+                .orElseThrow(() -> new CommentNotFoundException(commentId));
         comment.setText(updateComment.getText());
         return commentRepository.save(comment);
     }
