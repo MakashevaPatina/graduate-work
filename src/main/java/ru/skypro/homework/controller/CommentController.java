@@ -1,15 +1,12 @@
 package ru.skypro.homework.controller;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.Exceptions.AccessDeniedException;
-import ru.skypro.homework.Exceptions.CommentNotFoundException;
-import ru.skypro.homework.Exceptions.UnauthorizedAccessException;
 import ru.skypro.homework.dto.Comment;
-import ru.skypro.homework.dto.Comments;
+import ru.skypro.homework.dto.CommentsDTO;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
 import ru.skypro.homework.service.CommentService;
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping("/ads/{id}/comments")
@@ -20,51 +17,31 @@ public class CommentController {
         this.commentService = commentService;
     }
 
+    @Operation(summary = "Получение комментариев объявления")
     @GetMapping
-    public ResponseEntity<Comments> getComments(@PathVariable("id") int adId) {
-        try {
-            Comments comments = commentService.getComments(adId);
-            return new ResponseEntity<>(comments, HttpStatus.OK);
-        } catch (UnauthorizedAccessException e) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        } catch (CommentNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public CommentsDTO getComments(@PathVariable("id") int adId) {
+        return commentService.getComments(adId);
     }
 
+    @Operation(summary = "Добавление комментария к объявлению")
     @PostMapping
-    public ResponseEntity<Comment> addComment(@PathVariable("id") int adId, @RequestBody CreateOrUpdateComment createComment) {
-        try {
-            Comment newComment = commentService.addComment(adId, createComment);
-            return new ResponseEntity<>(newComment, HttpStatus.OK);
-        } catch (UnauthorizedAccessException e) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        } catch (CommentNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public Long addComment(@PathVariable("id") int adId,
+                          @RequestBody CreateOrUpdateComment createComment) {
+        return commentService.addComment(adId, createComment);
     }
 
+    @Operation(summary = "Удаление комментария")
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<Void> deleteComment(@PathVariable("id") int adId, @PathVariable("commentId") int commentId) throws AccessDeniedException {
-        try {
-            commentService.deleteComment(adId, commentId);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (UnauthorizedAccessException e) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        } catch (CommentNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public void deleteComment(@PathVariable("id") int adId,
+                              @PathVariable("commentId") Long commentId) throws AccessDeniedException {
+        commentService.deleteComment(adId, commentId);
     }
 
+    @Operation(summary = "Обновление комментария")
     @PatchMapping("/{commentId}")
-    public ResponseEntity<Comment> updateComment(@PathVariable("id") int adId, @PathVariable("commentId") int commentId, @RequestBody CreateOrUpdateComment updateComment) throws AccessDeniedException {
-        try {
-            Comment updatedComment = commentService.updateComment(adId, commentId, updateComment);
-            return new ResponseEntity<>(updatedComment, HttpStatus.OK);
-        } catch (UnauthorizedAccessException e) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        } catch (CommentNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public Comment updateComment(@PathVariable("id") int adId,
+                                 @PathVariable("commentId") Long commentId,
+                                 @RequestBody CreateOrUpdateComment updateComment) throws AccessDeniedException {
+        return commentService.updateComment(adId, commentId, updateComment);
     }
 }
