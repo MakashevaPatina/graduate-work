@@ -28,7 +28,6 @@ public class WebSecurityConfig {
             "/v3/api-docs",
             "/webjars/**",
             "/login",
-            "/register"
     };
 
     @Bean
@@ -36,8 +35,7 @@ public class WebSecurityConfig {
         UserDetails user =
                 User.builder()
                         .username("user@gmail.com")
-                        .password("password")
-                        .passwordEncoder(passwordEncoder::encode)
+                        .password(passwordEncoder.encode("password"))
                         .roles(Role.USER.name())
                         .build();
         return new InMemoryUserDetailsManager(user);
