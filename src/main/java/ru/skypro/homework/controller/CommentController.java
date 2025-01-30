@@ -1,5 +1,7 @@
 package ru.skypro.homework.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.Exceptions.AccessDeniedException;
 import ru.skypro.homework.dto.Comment;
@@ -8,8 +10,10 @@ import ru.skypro.homework.dto.CreateOrUpdateComment;
 import ru.skypro.homework.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
 
+
 @RestController
 @RequestMapping("/ads/{id}/comments")
+@Tag(name = "Комментарии")
 public class CommentController {
     private final CommentService commentService;
 

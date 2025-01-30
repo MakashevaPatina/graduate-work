@@ -1,9 +1,9 @@
 package ru.skypro.homework.dto;
 
+import jakarta.persistence.*;
 import lombok.Data;
 
 
-import javax.persistence.*;
 
 @Entity
 @Table(name = "comments")
