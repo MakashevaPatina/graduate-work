@@ -1,6 +1,8 @@
 package ru.skypro.homework.service;
 
 import ru.skypro.homework.dto.Ad;
+import ru.skypro.homework.dto.CreateOrUpdateAd;
+import ru.skypro.homework.dto.ExtendedAd;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,11 +11,15 @@ public interface AdService {
 
     List<Ad> getAllAd();
 
-    Ad getAdById(Integer id);
+    Ad createAd(CreateOrUpdateAd adDto);
 
-    Ad createAd(Ad ad);
+    ExtendedAd getAdById(int id);
 
-    Ad updateAd(Integer id, Ad adDetails);
+    Ad updateAd(int id, CreateOrUpdateAd adDto);
 
-    void deleteAd(Integer id);
+    void deleteAd(int id);
+
+    List<Ad> getMyAds();
+
+    void updateImage(int id);
 }
