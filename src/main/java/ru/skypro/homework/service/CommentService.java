@@ -1,7 +1,7 @@
 package ru.skypro.homework.service;
 
 import org.springframework.stereotype.Service;
-import ru.skypro.homework.Exceptions.CommentNotFoundException;
+import ru.skypro.homework.exceptions.CommentNotFoundException;
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.CommentsDTO;
 import ru.skypro.homework.dto.CreateOrUpdateComment;

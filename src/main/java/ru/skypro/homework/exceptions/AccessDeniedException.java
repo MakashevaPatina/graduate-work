@@ -1,4 +1,4 @@
-package ru.skypro.homework.Exceptions;
+package ru.skypro.homework.exceptions;
 
 public class AccessDeniedException extends RuntimeException {
     public AccessDeniedException(String message) {

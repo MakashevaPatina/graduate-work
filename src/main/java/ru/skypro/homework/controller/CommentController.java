@@ -1,9 +1,8 @@
 package ru.skypro.homework.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.skypro.homework.Exceptions.AccessDeniedException;
+import ru.skypro.homework.exceptions.AccessDeniedException;
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.CommentsDTO;
 import ru.skypro.homework.dto.CreateOrUpdateComment;

@@ -1,4 +1,4 @@
-package ru.skypro.homework.exception;
+package ru.skypro.homework.exceptions;
 
 import ru.skypro.homework.dto.Login;
 

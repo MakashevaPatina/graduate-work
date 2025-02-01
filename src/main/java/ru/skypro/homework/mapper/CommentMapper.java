@@ -1,8 +1,7 @@
-package ru.skypro.homework.Mapper;
+package ru.skypro.homework.mapper;
 
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.CommentsDTO;
-import ru.skypro.homework.dto.CreateOrUpdateComment;
 import org.mapstruct.Mapper;
 
 
