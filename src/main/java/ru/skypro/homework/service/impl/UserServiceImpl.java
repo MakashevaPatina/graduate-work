@@ -12,9 +12,9 @@ import ru.skypro.homework.dto.Register;
 import ru.skypro.homework.dto.UserDTO;
 import ru.skypro.homework.mapper.UserMapper;
 import ru.skypro.homework.model.User;
-import ru.skypro.homework.exception.UnauthorizedException;
-import ru.skypro.homework.exception.UserAlreadyExistsException;
-import ru.skypro.homework.exception.WrongPasswordException;
+import ru.skypro.homework.exceptions.UnauthorizedException;
+import ru.skypro.homework.exceptions.UserAlreadyExistsException;
+import ru.skypro.homework.exceptions.WrongPasswordException;
 import ru.skypro.homework.model.UserAvatar;
 import ru.skypro.homework.repository.UserAvatarRepository;
 import ru.skypro.homework.repository.UserRepository;
@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void createUser(Register register) {
         if (userRepository.findByUsername(register.getUsername()).isPresent()) {
-            throw new UserAlreadyExistsException(register);
+            throw new UserAlreadyExistsException("Пользователь с именем " + register.getUsername() + " уже существует");
         } else {
             userRepository.save(new User(
                     register.getUsername(),
@@ -132,7 +132,7 @@ public class UserServiceImpl implements UserService {
     public void checkLogin(Login login) {
         if (!authService.login(login.getUsername(), login.getPassword())) {
             log.error("Пользователь не авторизован: {}", login.getUsername());
-            throw new UnauthorizedException(login);
+            throw new UnauthorizedException(String.format("Пользователь %s не авторизован", login.getUsername()));
         }
     }
 }

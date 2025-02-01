@@ -7,7 +7,7 @@ import ru.skypro.homework.dto.Role;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "\"user\"")
+@Table(name = "users")
 @Data
 public class User {
     @Id

@@ -8,8 +8,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.Register;
-import ru.skypro.homework.exception.UserAlreadyExistsException;
-import ru.skypro.homework.exception.WrongPasswordException;
+import ru.skypro.homework.exceptions.UserAlreadyExistsException;
+import ru.skypro.homework.exceptions.WrongPasswordException;
 import ru.skypro.homework.service.AuthService;
 import ru.skypro.homework.service.UserService;
 
