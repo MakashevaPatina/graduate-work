@@ -3,7 +3,7 @@ package ru.skypro.homework.service;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.exceptions.CommentNotFoundException;
 import ru.skypro.homework.dto.Comment;
-import ru.skypro.homework.dto.CommentsDTO;
+import ru.skypro.homework.dto.Comments;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
 import ru.skypro.homework.repository.CommentRepository;
 
@@ -20,9 +20,9 @@ public class CommentService {
         this.commentRepository = commentRepository;
     }
 
-    public CommentsDTO getComments(int adId) {
+    public Comments getComments(int adId) {
         List<Comment> comments = commentRepository.findByAdId(adId);
-        CommentsDTO response = new CommentsDTO();
+        Comments response = new Comments();
         response.setCount(comments.size());
         response.setResults(comments);
         return response;

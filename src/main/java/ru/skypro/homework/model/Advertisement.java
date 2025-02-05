@@ -2,6 +2,7 @@ package ru.skypro.homework.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import ru.skypro.homework.dto.Comment;
 
 import java.util.List;
 

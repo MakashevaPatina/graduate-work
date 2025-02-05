@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 
-@Entity
 @Table(name = "comments")
 @Data
 public class Comment {
@@ -18,6 +17,4 @@ public class Comment {
     private long createdAt;
     private String text;
 
-    @Column(name = "ad_id")
-    private int adId;
 }
