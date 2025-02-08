@@ -2,9 +2,11 @@ package ru.skypro.homework.model;
 
 import lombok.Data;
 import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@NoArgsConstructor
 public class UserAvatar {
 
     @Id
@@ -23,9 +25,6 @@ public class UserAvatar {
         this.mediaType = mediaType;
         this.data = data;
         this.user = user;
-    }
-
-    public UserAvatar() {
     }
 }
 

@@ -1,60 +1,53 @@
 package ru.skypro.homework.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
-
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
-import ru.skypro.homework.dto.Register;
+import ru.skypro.homework.dto.LoginDTO;
+import ru.skypro.homework.dto.RegisterDTO;
 import ru.skypro.homework.exceptions.UserAlreadyExistsException;
 import ru.skypro.homework.exceptions.WrongPasswordException;
 import ru.skypro.homework.service.AuthService;
-import ru.skypro.homework.service.UserService;
 
 @Service
 @Slf4j
 public class AuthServiceImpl implements AuthService {
-
-    private final UserDetailsManager manager;
     private final PasswordEncoder encoder;
-    private final UserService userService;
+    private final UserServiceImpl userService;
+    private final AvitoUserDetailsService avitoUserDetailsService;
 
-    public AuthServiceImpl(UserDetailsManager manager,
-                           PasswordEncoder passwordEncoder,
-                           UserServiceImpl userService) {
-        this.manager = manager;
+    public AuthServiceImpl(PasswordEncoder passwordEncoder,
+                           UserServiceImpl userService, AvitoUserDetailsService avitoUserDetailsService) {
         this.encoder = passwordEncoder;
         this.userService = userService;
+        this.avitoUserDetailsService = avitoUserDetailsService;
     }
 
     @Override
-    public boolean login(String userName, String password) {
+    public boolean login(LoginDTO loginDTO) {
         try {
-            if (!manager.userExists(userName)) {
-                throw new UsernameNotFoundException("Пользователь не зарегистрирован");
-            }
-            UserDetails userDetails = manager.loadUserByUsername(userName);
-            if (!encoder.matches(password, userDetails.getPassword())) {
+            UserDetails userDetails = avitoUserDetailsService.loadUserByUsername(loginDTO.getUsername());
+            if (!encoder.matches(loginDTO.getPassword(), userDetails.getPassword())) {
                 throw new WrongPasswordException("Пароль неверный");
             }
             return true;
-        } catch (UsernameNotFoundException | WrongPasswordException e) {
-            log.error(e.getMessage());
+        } catch (WrongPasswordException | UsernameNotFoundException e) {
+            log.error("Ошибка аутентификации: {}", e.getMessage());
             return false;
         }
     }
 
     @Override
-    public boolean register(Register register) {
+    public Long registerId(RegisterDTO registerDTO) {
         try {
-            userService.createUser(register);
-            return true;
+            log.info("User created: {}", registerDTO.getUsername());
+            return userService.createUser(registerDTO);
         } catch (UserAlreadyExistsException e) {
             log.error(e.getMessage());
+            return null;
         }
-        return false;
     }
-
 }

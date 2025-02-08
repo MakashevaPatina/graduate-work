@@ -1,28 +1,22 @@
 package ru.skypro.homework.dto;
 
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+
 import java.util.Collection;
 import java.util.List;
 
-@Data
-@AllArgsConstructor
-public class UserDTO implements UserDetails {
-
-    private Long id;
-    private String username;
-    private String password;
-    private String firstName;
-    private String lastName;
-    private String phone;
-    @Enumerated(EnumType.STRING)
+public class UserIdDTO implements UserDetails {
+    @Getter
+    private final long id;
     private Role role;
+
+    public UserIdDTO(long id) {
+        this.id = id;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -31,31 +25,31 @@ public class UserDTO implements UserDetails {
 
     @Override
     public String getPassword() {
-        return password;
+        return null;
     }
 
     @Override
     public String getUsername() {
-        return username;
+        return null;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return true; // Аккаунт не просрочен
+        return false;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true; // Аккаунт не заблокирован
+        return false;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true; // Пароль не просрочен
+        return false;
     }
 
     @Override
     public boolean isEnabled() {
-        return true; // Аккаунт активен
+        return false;
     }
 }
