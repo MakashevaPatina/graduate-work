@@ -1,22 +1,21 @@
 package ru.skypro.homework.service;
 
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.Login;
-import ru.skypro.homework.dto.Register;
-import ru.skypro.homework.dto.UserDTO;
+import ru.skypro.homework.dto.*;
 
 import java.io.IOException;
 
-public interface UserService {
-    void createUser(Register register);
+public interface UserService extends UserDetailsManager {
+    void createUser(RegisterDTO registerDTO);
 
     boolean setPassword(String userName, String password, String newPassword);
 
-    UserDTO showUserInfo(Login login);
+    UserDTO showUserInfo(LoginDTO loginDTO);
 
-    void updateUserInfo(Login login, String firstName, String lastName, String phone);
+    void updateUserInfo(LoginDTO loginDTO, String firstName, String lastName, String phone);
 
-    void uploadAvatar(Login login, MultipartFile multipartFile) throws IOException;
+    void uploadAvatar(LoginDTO loginDTO, MultipartFile multipartFile) throws IOException;
 
-    void createAvatar(Login login, String filePath, MultipartFile multipartFile) throws IOException;
+    void createAvatar(LoginDTO loginDTO, String filePath, MultipartFile multipartFile) throws IOException;
 }

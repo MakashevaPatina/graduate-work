@@ -1,9 +1,7 @@
 package ru.skypro.homework.service.impl;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,7 +18,6 @@ import ru.skypro.homework.exceptions.WrongPasswordException;
 import ru.skypro.homework.model.UserAvatar;
 import ru.skypro.homework.repository.UserAvatarRepository;
 import ru.skypro.homework.repository.UserRepository;
-import ru.skypro.homework.service.AuthService;
 import ru.skypro.homework.service.UserService;
 
 import java.io.IOException;
@@ -29,14 +26,12 @@ import java.nio.file.Path;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    @Lazy
-    AuthService authService;
+
+    AuthServiceImpl authService;
     UserRepository userRepository;
     UserAvatarRepository userAvatarRepository;
     PasswordEncoder encoder;
-
     @Value("${my.dir}")
     private String pathDir;
 
