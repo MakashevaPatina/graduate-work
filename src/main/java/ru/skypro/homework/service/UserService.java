@@ -2,7 +2,9 @@ package ru.skypro.homework.service;
 
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.*;
+import ru.skypro.homework.dto.LoginDTO;
+import ru.skypro.homework.dto.RegisterDTO;
+import ru.skypro.homework.dto.UserDTO;
 
 import java.io.IOException;
 

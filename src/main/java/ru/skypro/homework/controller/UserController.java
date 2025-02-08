@@ -1,53 +1,65 @@
 package ru.skypro.homework.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.Login;
+import ru.skypro.homework.dto.LoginDTO;
 import ru.skypro.homework.dto.UserDTO;
 import ru.skypro.homework.service.UserService;
+import ru.skypro.homework.service.impl.UserServiceImpl;
 
 import java.io.IOException;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/users")
 @CrossOrigin(value = "http://localhost:3000")
+@RequestMapping("/users")
 @Tag(name = "Пользватели")
 public class UserController {
 
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
     @PostMapping("/set_password")
     @Operation(summary = "Обновление пароля")
-    public boolean setPassword(@RequestParam String userName,
-                               @RequestParam String password,
+    @ApiResponse(responseCode = "201", description = "OK")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
+
+    public boolean setPassword(@RequestParam String password,
                                @RequestParam String newPassword) {
-        return userService.setPassword(userName, password, newPassword);
+        //@AuthenticationPrincipal UserDetails) {
+        return userService.setPassword(password, newPassword);
     }
 
     @GetMapping("/me")
     @Operation(summary = "Получение информации об авторизованном пользователе")
-    public UserDTO showMe(@RequestBody Login login) {
-        return userService.showUserInfo(login);
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    public UserDTO showMe(@RequestBody LoginDTO loginDTO) {
+        return userService.showUserInfo(loginDTO);
     }
 
     @PatchMapping("/me")
     @Operation(summary = "Обновление информации об авторизованном пользователе")
-    public void updateUserInfo(@RequestBody Login login,
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    public void updateUserInfo(@RequestBody LoginDTO loginDTO,
                                @RequestParam String firstName,
                                @RequestParam String lastName,
                                @RequestParam String phone) {
-        userService.updateUserInfo(login, firstName, lastName, phone);
+        userService.updateUserInfo(loginDTO, firstName, lastName, phone);
     }
 
     @PatchMapping(path = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Обновление аватара авторизованного пользователя")
-    public void uploadImage(@RequestBody Login login,
+    @ApiResponse(responseCode = "201", description = "OK")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    public void uploadImage(@RequestBody LoginDTO loginDTO,
                             @RequestBody MultipartFile multipartFile) throws IOException {
-        userService.uploadAvatar(login, multipartFile);
+        userService.uploadAvatar(loginDTO, multipartFile);
     }
 }

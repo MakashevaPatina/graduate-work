@@ -11,8 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-@AllArgsConstructor
 @Data
+@AllArgsConstructor
 public class UserDTO implements UserDetails {
 
     private Long id;
@@ -21,8 +21,6 @@ public class UserDTO implements UserDetails {
     private String firstName;
     private String lastName;
     private String phone;
-    private Role role;
-
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -30,26 +28,32 @@ public class UserDTO implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
+
     @Override
     public String getPassword() {
         return password;
     }
+
     @Override
     public String getUsername() {
         return username;
     }
+
     @Override
     public boolean isAccountNonExpired() {
         return true; // Аккаунт не просрочен
     }
+
     @Override
     public boolean isAccountNonLocked() {
         return true; // Аккаунт не заблокирован
     }
+
     @Override
     public boolean isCredentialsNonExpired() {
         return true; // Пароль не просрочен
     }
+
     @Override
     public boolean isEnabled() {
         return true; // Аккаунт активен

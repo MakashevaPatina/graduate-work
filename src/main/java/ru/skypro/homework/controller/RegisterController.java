@@ -14,18 +14,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.skypro.homework.dto.RegisterDTO;
 import ru.skypro.homework.service.AuthService;
+
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
 @RequiredArgsConstructor
 public class RegisterController {
     private final AuthService authService;
+
     @Tag(name = "Регистрация")
     @Operation(summary = "Регистрация пользователя")
-    @PostMapping("/register/id")
+    @PostMapping("/register")
     @ApiResponse(responseCode = "201", description = "Created")
     @ApiResponse(responseCode = "400", description = "Bad Request")
     public Long registerId(@RequestBody @NotNull @Valid RegisterDTO registerDTO) {
+        log.info("Попытка регистрации пользователя: {}", registerDTO.getUsername());
         return authService.registerId(registerDTO);
     }
 }

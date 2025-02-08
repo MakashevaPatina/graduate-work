@@ -9,10 +9,18 @@ import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.UserDTO;
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.UserRepository;
+
 @Slf4j
 @Service
 public class AvitoUserDetailsService implements UserDetailsService {
-    UserRepository userRepository;
+
+    private final UserRepository userRepository;
+
+    @Autowired
+    public AvitoUserDetailsService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
