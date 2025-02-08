@@ -1,10 +1,11 @@
 package ru.skypro.homework.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import ru.skypro.homework.dto.Comment;
+import org.springframework.stereotype.Repository;
+import ru.skypro.homework.model.CommentEntity;
 
 import java.util.List;
-
-public interface CommentRepository extends JpaRepository<Comment, Long> {
-    List<Comment> findByAdId(int adId);
+@Repository
+public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
+    List<CommentEntity> findByAdvertisement_Id(int advertisementId);
 }

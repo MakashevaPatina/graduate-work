@@ -2,6 +2,8 @@ package ru.skypro.homework.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,9 +23,10 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder encoder;
     private final UserService userService;
 
+    @Autowired
     public AuthServiceImpl(UserDetailsManager manager,
                            PasswordEncoder passwordEncoder,
-                           UserServiceImpl userService) {
+                           @Lazy UserService userService) {
         this.manager = manager;
         this.encoder = passwordEncoder;
         this.userService = userService;

@@ -18,6 +18,7 @@ public class User {
     private String firstName;
     private String lastName;
     private String phone;
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     public User(String username, String password, String firstName, String lastName, String phone, Role role) {
@@ -27,6 +28,10 @@ public class User {
         this.lastName = lastName;
         this.phone = phone;
         this.role = role;
+    }
+
+    public User() {
+
     }
 }
 

@@ -1,7 +1,7 @@
 -- liquibase formatted sql
 
 -- changeset nast:1
-CREATE TABLE comments (
+CREATE TABLE IF NOT EXISTS comments (
     pk BIGINT PRIMARY KEY NOT NULL,
     author INTEGER NOT NULL,
     author_image TEXT,
@@ -11,7 +11,7 @@ CREATE TABLE comments (
     ad_id INTEGER NOT NULL
 );
 
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id BIGSERIAL PRIMARY KEY,
     username VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE users (
 );
 
 
-CREATE TABLE user_avatar (
+CREATE TABLE  IF NOT EXISTS user_avatar (
     id BIGSERIAL PRIMARY KEY,
     file_path VARCHAR(500) NOT NULL,
     file_size BIGINT NOT NULL,
@@ -32,7 +32,7 @@ CREATE TABLE user_avatar (
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-CREATE TABLE advertisement (
+CREATE TABLE IF NOT EXISTS advertisement (
     id BIGSERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,

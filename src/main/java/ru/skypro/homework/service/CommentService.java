@@ -5,6 +5,10 @@ import ru.skypro.homework.exceptions.CommentNotFoundException;
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.Comments;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
+import ru.skypro.homework.mapper.CommentMapper;
+import ru.skypro.homework.model.Advertisement;
+import ru.skypro.homework.model.CommentEntity;
+import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.CommentRepository;
 
 import java.util.ArrayList;
@@ -21,10 +25,10 @@ public class CommentService {
     }
 
     public Comments getComments(int adId) {
-        List<Comment> comments = commentRepository.findByAdId(adId);
+        List<CommentEntity> comments = commentRepository.findByAdvertisement_Id(adId);
         Comments response = new Comments();
         response.setCount(comments.size());
-        response.setResults(comments);
+        response.setResults(mapEntitiesToDTOs(comments));
         return response;
     }
 
@@ -32,11 +36,11 @@ public class CommentService {
         if (createComment.getText() == null || createComment.getText().isEmpty()) {
             throw new IllegalArgumentException("Text of comment can't be empty.");
         }
-        Comment newComment = new Comment();
 
-        newComment.setAuthor(0); //заглушка
-        newComment.setCreatedAt(System.currentTimeMillis());
+        CommentEntity newComment = new CommentEntity();
+        newComment.setAuthor(new User());
         newComment.setText(createComment.getText());
+        newComment.setAdvertisement(new Advertisement());
 
         return commentRepository.save(newComment).getPk();
     }
@@ -46,10 +50,22 @@ public class CommentService {
     }
 
     public Comment updateComment(int adId, Long commentId, CreateOrUpdateComment updateComment) {
-        Comment comment = commentRepository.findById(commentId)
+        CommentEntity commentEntity = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException(commentId));
-        comment.setText(updateComment.getText());
-        return commentRepository.save(comment);
+        commentEntity.setText(updateComment.getText());
+        return mapEntityToDTO(commentRepository.save(commentEntity));
+    }
+
+    private List<Comment> mapEntitiesToDTOs(List<CommentEntity> entities) {
+        List<Comment> comments = new ArrayList<>();
+        for (CommentEntity entity : entities) {
+            comments.add(mapEntityToDTO(entity));
+        }
+        return comments;
+    }
+
+    private Comment mapEntityToDTO(CommentEntity entity) {
+        return CommentMapper.INSTANCE.commentEntityToCommentDTO(entity);
     }
 }
 

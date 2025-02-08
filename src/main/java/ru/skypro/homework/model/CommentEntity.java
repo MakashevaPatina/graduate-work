@@ -13,18 +13,19 @@ public class CommentEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer pk;
+    private Long pk;
 
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     private String text;
-
+    @ManyToOne
     @JoinColumn(name = "author_id", referencedColumnName = "id")
     private User author;
 
     @ManyToOne
+    @JoinColumn(name = "advertisement_id", referencedColumnName = "id")
     private Advertisement advertisement;
 
     public CommentEntity() {

@@ -15,6 +15,7 @@ public class UserAvatar {
     private String mediaType;
     private byte[] data;
     @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
     public UserAvatar(String filePath, long fileSize, String mediaType, byte[] data, User user) {

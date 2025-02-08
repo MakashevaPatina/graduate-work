@@ -19,5 +19,5 @@ public class Advertisement {
     @ManyToOne
     private User author;
     @OneToMany(mappedBy = "advertisement", cascade = CascadeType.REMOVE)
-    private List<Comment> comments;
+    private List<CommentEntity> comments;
 }
