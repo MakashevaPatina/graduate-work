@@ -14,10 +14,11 @@ import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.service.AdService;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping("ads")
+@RequestMapping("/ads")
 @CrossOrigin(value = "http://localhost:3000")
 @Validated
 @Slf4j
@@ -30,7 +31,7 @@ public class AdController {
         this.adService = adService;
     }
 
-//    @Operation(summary = "Получение всех объявлений")
+    //    @Operation(summary = "Получение всех объявлений")
 //    @GetMapping
 //    public List<Ad> getAllAds() {
 //        return adService.getAllAd();
@@ -41,18 +42,21 @@ public class AdController {
 //    public ExtendedAd getAdById(@PathVariable Integer id) {
 //        return adService.getAdById(id);
 //    }
-
     @Operation(summary = "Добавление объявления")
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public Ad createAd(
-            @RequestPart(value = "ad", required = true) String adJson,
+            @RequestPart(value = "ad") String adJson,  // Получаем JSON в виде строки
             @RequestPart("image") MultipartFile image,
-            @RequestParam(required = false) String username) throws IOException {
-        log.info("Creating ad for user: {}", username);
+            Principal principal) throws IOException {
 
-        CreateOrUpdateAd dto = new ObjectMapper().readValue(adJson, CreateOrUpdateAd.class);
-        return adService.createAd(dto, image, username);
+        log.info("Создание объявления пользователем: {}", principal.getName());
+
+        // Десериализуем JSON в объект CreateOrUpdateAd
+        CreateOrUpdateAd adDto = new ObjectMapper().readValue(adJson, CreateOrUpdateAd.class);
+
+        return adService.createAd(adDto, image, principal.getName());
     }
+
 
 //    @Operation(summary = "Обновление информации об объявлении")
 //    @PatchMapping("/{id}")

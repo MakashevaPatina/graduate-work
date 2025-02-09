@@ -13,7 +13,6 @@ import ru.skypro.homework.model.User;
 
 @Mapper(componentModel = "spring")
 public interface AdMapper {
-    AdMapper INSTANCE = Mappers.getMapper(AdMapper.class);
 
     @Mapping(target = "author", ignore = true)
     Ad toAd(Advertisement advertisement);
@@ -24,6 +23,8 @@ public interface AdMapper {
     @Mapping(source = "author.phone", target = "phone")
     ExtendedAd toExtendedAd(Advertisement advertisement);
 
-    @Mapping(source = "author", target = "author")
+    @Mapping(target = "id", ignore = true) // Указываем, что id не должен маппиться
+    @Mapping(target = "image", ignore = true) // Изображение маппится отдельно
+    @Mapping(target = "author", source = "author")
     Advertisement toAdvertisement(CreateOrUpdateAd dto, User author);
 }

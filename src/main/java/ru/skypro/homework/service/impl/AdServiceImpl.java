@@ -1,5 +1,7 @@
 package ru.skypro.homework.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,7 +30,9 @@ public class AdServiceImpl implements AdService {
     private final AdMapper adMapper;
 
     private static final String UPLOAD_DIR = "image/";
+    private static final Logger log = LoggerFactory.getLogger(AdServiceImpl.class);
 
+    @Autowired
     public AdServiceImpl(AdRepository advertisementRepository, UserRepository userRepository, AdMapper adMapper) {
         this.advertisementRepository = advertisementRepository;
         this.userRepository = userRepository;
@@ -40,8 +44,9 @@ public class AdServiceImpl implements AdService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         String imagePath = saveImage(image);
-
+        log.info("Mapping ad: {}, author: {}", dto, user.getUsername());
         Advertisement advertisement = adMapper.toAdvertisement(dto, user);
+        log.info("Mapped advertisement: {}", advertisement);
         advertisement.setImage(imagePath);
 
         Advertisement savedAd = advertisementRepository.save(advertisement);

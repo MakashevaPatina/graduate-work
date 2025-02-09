@@ -1,7 +1,13 @@
 package ru.skypro.homework.config;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -14,6 +20,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import ru.skypro.homework.dto.Role;
+import ru.skypro.homework.service.impl.AvitoUserDetailsService;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -21,44 +28,38 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-    private static final String[] AUTH_WHITELIST = {
-            "/swagger-resources/**",
-            "/swagger-ui/**",
-            "/v3/api-docs",
-            "/webjars/**",
-            "/login",
-            "/register"
-    };
+    private final AvitoUserDetailsService avitoUserDetailsService;
 
-    @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails user =
-                User.builder()
-                        .username("admin@mail.com")
-                        .password("adminadmin")
-                        .passwordEncoder(passwordEncoder::encode)
-                        .roles(Role.ADMIN.name())
-                        .build();
-        return new InMemoryUserDetailsManager(user);
+    @Autowired
+    public WebSecurityConfig(AvitoUserDetailsService avitoUserDetailsService) {
+        this.avitoUserDetailsService = avitoUserDetailsService;
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(
-                        authorization ->
-                                authorization
-                                        .requestMatchers(AUTH_WHITELIST).permitAll()
-                                        .requestMatchers("/ads/**", "/users/**").authenticated())
-                .cors(AbstractHttpConfigurer::disable)
-                .httpBasic(withDefaults());
-        return http.build();
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .csrf(csrf -> csrf.disable())
+                .cors(Customizer.withDefaults())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/ads/**", "/users/**").authenticated()
+                        .anyRequest().permitAll()
+                )
+                .httpBasic(Customizer.withDefaults())
+                .authenticationProvider(authenticationProvider())
+                .build();
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(avitoUserDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 }
