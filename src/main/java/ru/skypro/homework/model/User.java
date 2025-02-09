@@ -22,6 +22,8 @@ public class User {
     private String phone;
     @Enumerated(EnumType.STRING)
     private Role role;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private UserAvatar userAvatar;
 
     public User(String username, String password, String firstName, String lastName, String phone, Role role) {
         this.username = username;

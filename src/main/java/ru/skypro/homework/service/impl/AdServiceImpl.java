@@ -40,17 +40,19 @@ public class AdServiceImpl implements AdService {
     }
 
     public Ad createAd(CreateOrUpdateAd dto, MultipartFile image, String username) {
+        log.info("Trying to find user by username: {}", username);
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
+        log.info("Found user: {}", user);
         String imagePath = saveImage(image);
         log.info("Mapping ad: {}, author: {}", dto, user.getUsername());
-        Advertisement advertisement = adMapper.toAdvertisement(dto, user);
+        Advertisement advertisement = adMapper.createOrUpdateAdToAdvertisement(dto, user);
+        advertisement.setAuthor(user);
         log.info("Mapped advertisement: {}", advertisement);
         advertisement.setImage(imagePath);
 
         Advertisement savedAd = advertisementRepository.save(advertisement);
-        return adMapper.toAd(savedAd);
+        return adMapper.advertisementToAd(savedAd);
     }
 
     private String saveImage(MultipartFile file) {

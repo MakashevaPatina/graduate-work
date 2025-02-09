@@ -94,8 +94,9 @@ public class UserServiceImpl {
 
 
 
-        public UserDTO showUserInfo (LoginDTO loginDTO){
-            User user = userRepository.findByUsername(loginDTO.getUsername()).orElseThrow();
+        public UserDTO showUserInfo (String username){
+            User user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
             return UserDTOMapper.INSTANCE.userToAllInfoUserDTO(user);
         }
 

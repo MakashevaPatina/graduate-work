@@ -40,8 +40,8 @@ public class UserController {
     @GetMapping("/me")
     @Operation(summary = "Получение информации об авторизованном пользователе")
     @ApiResponse(responseCode = "401", description = "Unauthorized")
-    public UserDTO showMe(@RequestBody LoginDTO loginDTO) {
-        return userService.showUserInfo(loginDTO);
+    public UserDTO showMe(@AuthenticationPrincipal UserDetails userDetails) {
+        return userService.showUserInfo(userDetails.getUsername());
     }
 
     @PatchMapping("/me")

@@ -14,6 +14,4 @@ public class Ad {
     private Integer pk;
     private Double price;
     private String title;
-
-
 }
