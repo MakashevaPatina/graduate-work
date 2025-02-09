@@ -101,11 +101,12 @@ public class UserServiceImpl {
         }
 
 
-        public void updateUserInfo (LoginDTO loginDTO, String firstName, String lastName, String phone){
-            User user = userRepository.findByUsername(loginDTO.getUsername()).orElseThrow();
-            user.setFirstName(firstName);
-            user.setLastName(lastName);
-            user.setPhone(phone);
+        public void updateUserInfo (String username, UserDTO userDTO){
+            User user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
+            user.setFirstName(userDTO.getFirstName());
+            user.setLastName(userDTO.getLastName());
+            user.setPhone(userDTO.getPhone());
             userRepository.save(user);
         }
 
@@ -142,5 +143,4 @@ public class UserServiceImpl {
                 Files.createDirectory(path);
             }
         }
-
-    }
+}

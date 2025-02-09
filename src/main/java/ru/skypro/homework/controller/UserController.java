@@ -47,11 +47,9 @@ public class UserController {
     @PatchMapping("/me")
     @Operation(summary = "Обновление информации об авторизованном пользователе")
     @ApiResponse(responseCode = "401", description = "Unauthorized")
-    public void updateUserInfo(@RequestBody LoginDTO loginDTO,
-                               @RequestParam String firstName,
-                               @RequestParam String lastName,
-                               @RequestParam String phone) {
-        userService.updateUserInfo(loginDTO, firstName, lastName, phone);
+    public void updateUserInfo(@AuthenticationPrincipal UserDetails userDetails,
+                               @RequestBody UserDTO userDTO) {
+        userService.updateUserInfo(userDetails.getUsername(), userDTO);
     }
 
     @PatchMapping(path = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
