@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Ad {
 
-    private Integer author;
+    private Long author;
     private String image;
     private Integer pk;
-    private Integer price;
+    private Double price;
     private String title;
 
 

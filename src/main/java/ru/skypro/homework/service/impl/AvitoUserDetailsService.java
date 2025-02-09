@@ -25,7 +25,6 @@ public class AvitoUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(String.format("Пользователь %s не зарегистрирован", username)));
-        log.error(String.format("Пользователь %s не зарегистрирован", username));
         return new UserDTO(
                 user.getId(),
                 user.getUsername(),

@@ -8,5 +8,5 @@ import ru.skypro.homework.model.Advertisement;
 import java.util.List;
 
 @Repository
-public interface AdRepository extends JpaRepository<Advertisement, Integer> {
+public interface AdRepository extends JpaRepository<Advertisement, Long> {
 }

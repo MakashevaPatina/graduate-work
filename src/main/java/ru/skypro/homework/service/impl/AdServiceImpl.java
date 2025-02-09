@@ -1,47 +1,65 @@
 package ru.skypro.homework.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.Ad;
 import ru.skypro.homework.dto.CreateOrUpdateAd;
-import ru.skypro.homework.dto.ExtendedAd;
+import ru.skypro.homework.mapper.AdMapper;
+import ru.skypro.homework.model.Advertisement;
+import ru.skypro.homework.model.User;
+import ru.skypro.homework.repository.AdRepository;
+import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdService;
 
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.UUID;
 
 
 @Service
 public class AdServiceImpl implements AdService {
 
-    @Override
-    public List<Ad> getAllAd() {
-        return List.of();
+    private final AdRepository advertisementRepository;
+    private final UserRepository userRepository;
+    private final AdMapper adMapper;
+
+    private static final String UPLOAD_DIR = "image/";
+
+    public AdServiceImpl(AdRepository advertisementRepository, UserRepository userRepository, AdMapper adMapper) {
+        this.advertisementRepository = advertisementRepository;
+        this.userRepository = userRepository;
+        this.adMapper = adMapper;
     }
 
-    @Override
-    public Ad createAd(CreateOrUpdateAd adDto) {
-        return new Ad();
+    public Ad createAd(CreateOrUpdateAd dto, MultipartFile image, String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        String imagePath = saveImage(image);
+
+        Advertisement advertisement = adMapper.toAdvertisement(dto, user);
+        advertisement.setImage(imagePath);
+
+        Advertisement savedAd = advertisementRepository.save(advertisement);
+        return adMapper.toAd(savedAd);
     }
 
-    @Override
-    public ExtendedAd getAdById(int id) {
-        return new ExtendedAd();
-    }
-
-    @Override
-    public Ad updateAd(int id, CreateOrUpdateAd adDto) {
-        return new Ad();
-    }
-
-    @Override
-    public void deleteAd(int id) {
-    }
-
-    @Override
-    public List<Ad> getMyAds() {
-        return List.of();
-    }
-
-    @Override
-    public void updateImage(int id) {
+    private String saveImage(MultipartFile file) {
+        try {
+            if (file.isEmpty()) {
+                throw new RuntimeException("File is empty");
+            }
+            String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            Path path = Path.of(UPLOAD_DIR, filename);
+            Files.createDirectories(path.getParent());
+            Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+            return path.toString();
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to store file", e);
+        }
     }
 }
