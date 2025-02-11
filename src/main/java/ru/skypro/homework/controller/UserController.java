@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,11 +12,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.LoginDTO;
 import ru.skypro.homework.dto.UserDTO;
+import ru.skypro.homework.model.NewPassword;
 import ru.skypro.homework.service.UserService;
 import ru.skypro.homework.service.impl.UserServiceImpl;
 
 import java.io.IOException;
+import java.security.Principal;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @CrossOrigin(value = "http://localhost:3000")
@@ -31,17 +35,17 @@ public class UserController {
     @ApiResponse(responseCode = "401", description = "Unauthorized")
     @ApiResponse(responseCode = "403", description = "Forbidden")
 
-    public boolean setPassword(@RequestParam String password,
-                               @RequestParam String newPassword) {
-        //@AuthenticationPrincipal UserDetails) {
-        return userService.setPassword(password, newPassword);
+    public void setPassword(@RequestBody NewPassword newPassword,
+                            @AuthenticationPrincipal Principal principal) {
+        userService.setPassword(newPassword, principal);
     }
 
     @GetMapping("/me")
     @Operation(summary = "Получение информации об авторизованном пользователе")
     @ApiResponse(responseCode = "401", description = "Unauthorized")
     public UserDTO showMe(@AuthenticationPrincipal UserDetails userDetails) {
-        return userService.showUserInfo(userDetails.getUsername());
+        log.info("Попытка отображения инфо");
+        return userService.showUserInfo(userDetails);
     }
 
     @PatchMapping("/me")
@@ -49,6 +53,7 @@ public class UserController {
     @ApiResponse(responseCode = "401", description = "Unauthorized")
     public void updateUserInfo(@AuthenticationPrincipal UserDetails userDetails,
                                @RequestBody UserDTO userDTO) {
+
         userService.updateUserInfo(userDetails.getUsername(), userDTO);
     }
 

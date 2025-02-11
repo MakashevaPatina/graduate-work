@@ -2,6 +2,9 @@ package ru.skypro.homework.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,13 +37,13 @@ public class AuthServiceImpl implements AuthService {
             if (!encoder.matches(loginDTO.getPassword(), userDetails.getPassword())) {
                 throw new WrongPasswordException("Пароль неверный");
             }
+            log.info("Вход выполнен");
             return true;
         } catch (WrongPasswordException | UsernameNotFoundException e) {
             log.error("Ошибка аутентификации: {}", e.getMessage());
             return false;
         }
     }
-
     @Override
     public Long registerId(RegisterDTO registerDTO) {
         try {
