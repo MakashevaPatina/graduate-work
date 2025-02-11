@@ -11,6 +11,8 @@ import ru.skypro.homework.dto.ExtendedAd;
 import ru.skypro.homework.model.Advertisement;
 import ru.skypro.homework.model.User;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface AdMapper {
     AdMapper INSTANCE = Mappers.getMapper(AdMapper.class);
@@ -32,4 +34,6 @@ public interface AdMapper {
     @Mapping(target = "comments", ignore = true)
     @Mapping(target = "image", ignore = true)
     Advertisement createOrUpdateAdToAdvertisement(CreateOrUpdateAd createOrUpdateAd, User user);
+
+    List<Ad> advertisementToAdList(List<Advertisement> advertisements);
 }

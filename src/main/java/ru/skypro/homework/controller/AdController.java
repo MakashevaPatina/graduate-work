@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,7 +23,7 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/ads")
+@RequestMapping("ads")
 @CrossOrigin(value = "http://localhost:3000")
 @Validated
 @Slf4j
@@ -39,11 +37,12 @@ public class AdController {
         this.userRepository = userRepository;
     }
 
-    //    @Operation(summary = "Получение всех объявлений")
-//    @GetMapping
-//    public List<Ad> getAllAds() {
-//        return adService.getAllAd();
-//    }
+    @Operation(summary = "Получение всех объявлений")
+    @GetMapping
+    public ResponseEntity<List<Ad>> getAllAds() {
+        List<Ad> ads = adService.getAllAds();
+        return ResponseEntity.ok(ads);
+    }
 //
 //    @Operation(summary = "Получение информации об объявлении")
 //    @GetMapping("/{id}")
@@ -57,28 +56,41 @@ public class AdController {
                                        Principal principal) throws IOException {
         return ResponseEntity.status(HttpStatus.CREATED).body(adService.createAd(properties, image, principal.getName()));
     }
+    @Operation(summary = "Получение объявлений авторизованного пользователя")
+    @GetMapping("/me")
+    public ResponseEntity<List<Ad>> getAdsMe(Principal principal) {
+        List<Ad> ads = adService.getAdsByUser(principal.getName());
+        return ResponseEntity.ok(ads);
+    }
 
+    @Operation(summary = "Удаление объявления")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> removeAd(@PathVariable int id) {
+        boolean removed = adService.removeAd(id);
+        if (removed) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+    @Operation(summary = "Обновление информации об объявлении")
+    @PatchMapping("/{id}")
+    public ResponseEntity<Ad> updateAd(@PathVariable int id,
+                                       @RequestBody CreateOrUpdateAd properties) {
+        Ad updatedAd = adService.updateAd(id, properties);
+        if (updatedAd == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(updatedAd);
+    }
 
-//    @Operation(summary = "Обновление информации об объявлении")
-//    @PatchMapping("/{id}")
-//    public Ad updateAd(@PathVariable Integer id, @RequestBody CreateOrUpdateAd ad) {
-//        return adService.updateAd(id, ad);
-//    }
-//
-//    @Operation(summary = "Удаление объявления")
-//    @DeleteMapping("/{id}")
-//    public void deleteAd(@PathVariable Integer id) {
-//        adService.deleteAd(id);
-//    }
-//
-//    @Operation(summary = "Получение объявлений авторизованного пользователя")
-//    @GetMapping("/me")
-//    public List<Ad> getMyAds() {
-//        return adService.getMyAds();
-//    }
-//
-//    @Operation(summary = "Обновление картинки объявления")
-//    @PatchMapping("/{id}/image")
-//    public void updateImage(@PathVariable int id) {
-//    }
+    @Operation(summary = "Получение информации об объявлении")
+    @GetMapping("/{id}")
+    public ResponseEntity<Ad> getAd(@PathVariable int id) {
+        Ad ad = adService.getAd(id);
+        if (ad == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(ad);
+    }
+
 }

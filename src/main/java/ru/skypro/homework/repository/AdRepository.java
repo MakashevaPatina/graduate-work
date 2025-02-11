@@ -9,4 +9,5 @@ import java.util.List;
 
 @Repository
 public interface AdRepository extends JpaRepository<Advertisement, Long> {
+    List<Advertisement> findByAuthorUsername(String username);
 }

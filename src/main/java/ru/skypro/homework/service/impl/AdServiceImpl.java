@@ -14,11 +14,11 @@ import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdService;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -39,6 +39,12 @@ public class AdServiceImpl implements AdService {
         this.adMapper = adMapper;
     }
 
+    @Override
+    public List<Ad> getAllAds() {
+        List<Advertisement> advertisements = advertisementRepository.findAll();
+        return adMapper.advertisementToAdList(advertisements);
+    }
+
     public Ad createAd(CreateOrUpdateAd dto, MultipartFile image, String username) {
         log.info("Trying to find user by username: {}", username);
         User user = userRepository.findByUsername(username)
@@ -53,6 +59,11 @@ public class AdServiceImpl implements AdService {
 
         Advertisement savedAd = advertisementRepository.save(advertisement);
         return adMapper.advertisementToAd(savedAd);
+    }
+    @Override
+    public List<Ad> getAdsByUser(String username) {
+        List<Advertisement> ads = advertisementRepository.findByAuthorUsername(username);
+        return adMapper.advertisementToAdList(ads);
     }
 
     private String saveImage(MultipartFile file) {
@@ -69,4 +80,32 @@ public class AdServiceImpl implements AdService {
             throw new RuntimeException("Failed to store file", e);
         }
     }
+    @Override
+    public Ad getAd(long id) {
+        Advertisement advertisement = advertisementRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Advertisement not found"));
+        return adMapper.advertisementToAd(advertisement);
+    }
+
+    @Override
+    public boolean removeAd(long id) {
+        if (!advertisementRepository.existsById(id)) {
+            return false;
+        }
+        advertisementRepository.deleteById(id);
+        return true;
+    }
+
+    @Override
+    public Ad updateAd(long id, CreateOrUpdateAd dto) {
+        Advertisement existingAd = advertisementRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Advertisement not found"));
+        existingAd.setTitle(dto.getTitle());
+        existingAd.setPrice(Double.valueOf(dto.getPrice()));
+        existingAd.setDescription(dto.getDescription());
+
+        Advertisement updatedAd = advertisementRepository.save(existingAd);
+        return adMapper.advertisementToAd(updatedAd);
+    }
+
 }

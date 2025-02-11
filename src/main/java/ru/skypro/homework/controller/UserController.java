@@ -15,6 +15,7 @@ import ru.skypro.homework.service.UserService;
 import ru.skypro.homework.service.impl.UserServiceImpl;
 
 import java.io.IOException;
+import java.security.Principal;
 
 @RequiredArgsConstructor
 @RestController
@@ -40,16 +41,17 @@ public class UserController {
     @GetMapping("/me")
     @Operation(summary = "Получение информации об авторизованном пользователе")
     @ApiResponse(responseCode = "401", description = "Unauthorized")
-    public UserDTO showMe(@AuthenticationPrincipal UserDetails userDetails) {
-        return userService.showUserInfo(userDetails.getUsername());
+    public UserDTO showMe(Principal principal) {
+        return userService.showUserInfo(principal.getName());
     }
 
     @PatchMapping("/me")
     @Operation(summary = "Обновление информации об авторизованном пользователе")
     @ApiResponse(responseCode = "401", description = "Unauthorized")
-    public void updateUserInfo(@AuthenticationPrincipal UserDetails userDetails,
+    public void updateUserInfo(Principal principal,
                                @RequestBody UserDTO userDTO) {
-        userService.updateUserInfo(userDetails.getUsername(), userDTO);
+
+        userService.updateUserInfo(principal.getName(), userDTO);
     }
 
     @PatchMapping(path = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
