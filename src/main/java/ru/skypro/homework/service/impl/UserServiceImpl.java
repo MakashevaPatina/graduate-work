@@ -1,20 +1,18 @@
 package ru.skypro.homework.service.impl;
 
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.LoginDTO;
 import ru.skypro.homework.dto.RegisterDTO;
 import ru.skypro.homework.dto.UserDTO;
-import ru.skypro.homework.exceptions.UnauthorizedException;
+import ru.skypro.homework.dto.UserUpdateInfoDTO;
+import ru.skypro.homework.exceptions.AvatarNotFoundException;
 import ru.skypro.homework.mapper.UserDTOMapper;
 import ru.skypro.homework.model.NewPassword;
 import ru.skypro.homework.model.User;
@@ -25,6 +23,8 @@ import ru.skypro.homework.repository.UserAvatarRepository;
 import ru.skypro.homework.repository.UserRepository;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Principal;
@@ -32,8 +32,6 @@ import java.security.Principal;
 @Slf4j
 @Service
 public class UserServiceImpl {
-    @Autowired
-    AvitoUserDetailsService avitoUserDetailsService;
     @Autowired
     UserRepository userRepository;
     @Autowired
@@ -44,7 +42,7 @@ public class UserServiceImpl {
     private String pathDir;
 
     public Long createUser(RegisterDTO registerDTO) {
-        if (registerDTO.getUsername() != null && //дописать
+        if (registerDTO.getUsername() != null &&
                 userRepository.findByUsername(registerDTO.getUsername()).isPresent()) {
             throw new UserAlreadyExistsException("Пользователь с именем " + registerDTO.getUsername() + " уже существует");
         }
@@ -72,35 +70,41 @@ public class UserServiceImpl {
         log.info("Пароль изменен");
     }
 
-    public UserDTO showUserInfo(@AuthenticationPrincipal UserDetails userDetails) {
-        User user = userRepository.findByUsername(userDetails.getUsername())
+    public UserDTO showUserInfo(Principal principal) {
+        User user = userRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
         return UserDTOMapper.INSTANCE.userToAllInfoUserDTO(user);
     }
 
-    public void updateUserInfo(String username, UserDTO userDTO) {
-        User user = userRepository.findByUsername(username)
+    @Transactional
+    public UserUpdateInfoDTO updateUserInfo(UserUpdateInfoDTO userUpdateInfoDTO, Principal principal) {
+        User user = userRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
-        user.setFirstName(userDTO.getFirstName());
-        user.setLastName(userDTO.getLastName());
-        user.setPhone(userDTO.getPhone());
+
+        user.setFirstName(userUpdateInfoDTO.getFirstName());
+        user.setLastName(userUpdateInfoDTO.getLastName());
+        user.setPhone(userUpdateInfoDTO.getPhone());
+
         userRepository.save(user);
+
+        log.info("Изменена информация пользователя {}", principal.getName());
+        return userUpdateInfoDTO;
     }
 
-    public void uploadAvatar(LoginDTO loginDTO, MultipartFile multipartFile) throws IOException {
+    public void updateAvatar(Principal principal, MultipartFile multipartFile) throws IOException {
         createDirectory();
         Path filePath;
         if ((multipartFile.getOriginalFilename() != null)) {
-            filePath = Path.of(pathDir, String.format("user(%s)", loginDTO) + "." +
+            filePath = Path.of(pathDir, String.format("user(%s)", principal.getName()) + "." +
                     getExtension(multipartFile.getOriginalFilename()));
-            createAvatar(loginDTO, filePath.toString(), multipartFile);
+            createAvatar(principal, filePath.toString(), multipartFile);
             multipartFile.transferTo(filePath);
         }
     }
 
 
-    public void createAvatar(LoginDTO loginDTO, String filePath, MultipartFile multipartFile) throws IOException {
-        User user = userRepository.findByUsername(loginDTO.getUsername()).orElseThrow(() -> new UsernameNotFoundException(loginDTO.getUsername()));
+    public void createAvatar(Principal principal, String filePath, MultipartFile multipartFile) throws IOException {
+        User user = userRepository.findByUsername(principal.getName()).orElseThrow(() -> new UsernameNotFoundException(principal.getName()));
         userAvatarRepository.save(new UserAvatar(
                 filePath,
                 multipartFile.getSize(),
@@ -119,4 +123,20 @@ public class UserServiceImpl {
             Files.createDirectory(path);
         }
     }
+
+
+    public void transferImageToResponse(Long id, HttpServletResponse response) {
+        log.info("Был вызван метод для трансформации изображения для ответа{}{}", id, response);
+        UserAvatar userAvatar = userAvatarRepository.findById(id)
+                .orElseThrow(() -> new AvatarNotFoundException("Не удалось найти изображение по id: " + id));
+        try (OutputStream os = response.getOutputStream()) {
+            response.setStatus(200);
+            response.setContentType(userAvatar.getMediaType());
+            response.setContentLength((int) userAvatar.getFileSize());
+            os.write(userAvatar.getData()); // Получаем данные изображения из базы
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to transfer image to response ", e);
+        }
+    }
+    //
 }

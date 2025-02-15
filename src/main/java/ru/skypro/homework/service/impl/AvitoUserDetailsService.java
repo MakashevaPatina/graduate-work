@@ -16,7 +16,7 @@ public class AvitoUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-    @Autowired
+
     public AvitoUserDetailsService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -32,6 +32,7 @@ public class AvitoUserDetailsService implements UserDetailsService {
                 user.getFirstName(),
                 user.getLastName(),
                 user.getPhone(),
-                user.getRole());
+                user.getRole(),
+                user.getImage());
     }
 }

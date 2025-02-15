@@ -24,6 +24,7 @@ public class User {
     private Role role;
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private UserAvatar userAvatar;
+    private String image;
 
     public User(String username, String password, String firstName, String lastName, String phone, Role role) {
         this.username = username;

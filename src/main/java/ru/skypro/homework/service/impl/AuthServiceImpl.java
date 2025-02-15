@@ -34,6 +34,7 @@ public class AuthServiceImpl implements AuthService {
             if (!encoder.matches(loginDTO.getPassword(), userDetails.getPassword())) {
                 throw new WrongPasswordException("Пароль неверный");
             }
+            log.info("Выполнен вход {}", loginDTO.getUsername());
             return true;
         } catch (WrongPasswordException | UsernameNotFoundException e) {
             log.error("Ошибка аутентификации: {}", e.getMessage());

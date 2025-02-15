@@ -23,6 +23,7 @@ public class UserDTO implements UserDetails {
     private String phone;
     @Enumerated(EnumType.STRING)
     private Role role;
+    private String image; // URL аватарки
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

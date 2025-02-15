@@ -2,13 +2,13 @@
 
 -- changeset nast:1
 CREATE TABLE IF NOT EXISTS comments (
-    pk BIGINT PRIMARY KEY NOT NULL,
-    author INTEGER NOT NULL,
+    pk BIGSERIAL PRIMARY KEY NOT NULL,
+    author_id BIGINT NOT NULL,
     author_image TEXT,
     author_first_name TEXT,
-    created_at BIGINT NOT NULL,
+    created_at TIMESTAMP NOT NULL,
     text TEXT NOT NULL,
-    ad_id INTEGER NOT NULL
+    advertisement_id BIGSERIAL NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS users (
